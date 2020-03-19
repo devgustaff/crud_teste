@@ -4,36 +4,33 @@ class Core
 {
 	public function run() 
 	{
-		$url = explode("index.php", $_SERVER["PHP_SELF"]);
-		$url = end($url);
-		$params = array();
+		 $url = "/";
+        $params = array();
 
-		if ( !empty($url) ) {
-			$url = explode("/", $url);
-			array_shift($url);
+        if (isset($_GET["url"])) $url .= $_GET["url"];
 
-			$currentController = $url[0] . "Controller";
-			array_shift($url);
+        if (!empty($url) && $url != "/") {
+            $url = explode("/", $url);
+            array_shift($url);
 
-			if ( isset($url[0]) ) {
-				$currentAction = $url[0];
-				array_shift($url);
-			} else {
-				$currentAction = "index";
-			}
+            $currentController = $url[0] . "Controller";
+            array_shift($url);
 
-			if (count($url) > 0) {
-				$params = $url;
-			}
+            if (isset($url[0]) && !empty($url[0])) {
+                $currentAction = $url[0];
+                array_shift($url);
+            } else {
+                $currentAction = "index";
+            }
 
-		} else {
-			$currentController = "HomeController";
-			$currentAction = "index";
-		}
+            if (count($url) > 0) $params = $url;
+        } else {
+            $currentController = "HomeController";
+            $currentAction = "index";
+        }
 
-		require_once 'app/Controller.php';
-
-		$current = new $currentController();
-		call_user_func_array(array($current, $currentAction), $params);
+        require_once "Controller.php";
+        $current = new $currentController();
+        call_user_func_array(array($current, $currentAction), $params);
 	}	
 }

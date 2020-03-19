@@ -1,3 +1,8 @@
+<?php 
+	if (!empty($_GET["error"]) && $_GET["error"] == "error") {
+		echo "Email já cadastrado";
+	}
+?>
 <h1>Cadastrar</h1>
 <div class="form">
 	<form action="<?php echo URL;?>users/add" method="post">

@@ -28,11 +28,37 @@ class User extends DBConnect
 		}
 	}
 
-	public function email_exists() 
+	public function update($id) {
+		$sql = "UPDATE users 
+              	SET name = :name, phone = :phone, date_birth = :date_birth, address = :address 
+              	WHERE id = :id";
+
+      	$stmt = $this->conn->prepare($sql);
+
+	    $stmt->bindValue(":name", $this->getName(), PDO::PARAM_STR);
+		$stmt->bindValue(":phone", $this->getPhone(), PDO::PARAM_STR);
+		$stmt->bindValue(":date_birth", $this->getDate(), PDO::PARAM_STR);
+		$stmt->bindValue(":address", $this->getAddress(), PDO::PARAM_STR);
+		$stmt->bindValue(":id", $id, PDO::PARAM_INT);
+      	$stmt->execute();
+
+      	return true;
+	}
+
+	public function deleteUser($id) {
+		$sql = "DELETE FROM users WHERE id = :id";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(":id", $id);
+		$stmt->execute();
+
+		return true;
+	}
+
+	public function email_exists($email) 
 	{
 		$sql = "SELECT * FROM users WHERE email = :email";
 		$stmt = $this->conn->prepare($sql);
-		$stmt->bindValue(":email", $this->getEmail(), PDO::PARAM_STR);
+		$stmt->bindValue(":email", $email, PDO::PARAM_STR);
 		$stmt->execute();
 
 		if ( $stmt->rowCount() > 0 ) {
@@ -54,6 +80,20 @@ class User extends DBConnect
 			$rows = $stmt->fetchAll();
 		}
 
+		return $rows;
+	}
+
+	public function getUser($id) {
+		$sql = "SELECT * FROM users WHERE id = :id";
+		$stmt = $this->conn->prepare($sql);
+		$stmt->bindValue(":id", $id);
+		$stmt->execute();
+
+		$rows = array();
+
+		if ($stmt->rowCount() > 0) {
+			$rows = $stmt->fetch();
+		}
 		return $rows;
 	}
 
